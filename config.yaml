@@ -1,0 +1,38 @@
+# Job Search Agent Harness Configuration
+
+# Resume file (plain text or markdown)
+resume_path: "resume/resume.txt"
+
+# Target job sources
+sources:
+  # Add real sources here with per-site CSS selectors.
+  # Example:
+  # - name: "Shopify Careers"
+  #   url: "https://www.shopify.com/careers/search?teams=engineering"
+  #   type: "dynamic"
+  #   selectors:
+  #     container: "article.job-card"
+  #     title: "h2.job-title"
+  #     link: "a"
+  - name: "Mock Tech Careers"
+    url: "file:///Users/macbookpro14/.qclaw/workspace-agent-286f7c51/job-search-agent/data/mock_careers.html"
+    type: "static"
+    selectors:
+      container: "article.job-card"
+      title: "h2.job-title"
+      link: "a"
+
+# Matching settings
+matching:
+  min_match_score: 0.3
+  top_k: 20
+
+# Output settings
+output:
+  jobs_csv: "data/jobs.csv"
+  report_md: "data/report.md"
+
+# Retry settings
+retry:
+  max_attempts: 3
+  backoff_seconds: 2

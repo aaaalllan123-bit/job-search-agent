@@ -1,0 +1,28 @@
+Name: Student
+Degree: Computer Science, University of Waterloo
+Year: 2B
+
+Technical Skills:
+- Python
+- C/C++
+- JavaScript
+- HTML/CSS
+- Flask
+- Git
+- SQL
+- Linux/Unix
+
+Experience:
+- Built a lecture notes recorder web app with Flask and Web Speech API
+- Developed C programming assignments for CS137
+- Familiar with basic web scraping and data analysis
+
+Soft Skills:
+- Team collaboration
+- Problem solving
+- Communication
+
+Desired Locations:
+- Toronto, ON
+- Waterloo, ON
+- Remote
