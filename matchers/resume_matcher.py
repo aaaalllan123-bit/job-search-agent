@@ -24,6 +24,20 @@ class MatchResult:
     deadline: str
     learning_plan: List[str]
 
+    def to_dict(self) -> Dict:
+        return {
+            "job_title": self.job_title,
+            "company": self.company,
+            "location": self.location,
+            "url": self.url,
+            "match_score": self.match_score,
+            "matched_skills": self.matched_skills,
+            "missing_skills": self.missing_skills,
+            "experience_gap": self.experience_gap,
+            "deadline": self.deadline,
+            "learning_plan": self.learning_plan,
+        }
+
 
 class ResumeMatcher:
     def __init__(self, resume_text: str):

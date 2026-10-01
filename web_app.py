@@ -1,0 +1,91 @@
+"""
+Flask web UI for the Job Search Agent Harness.
+"""
+
+import logging
+import os
+import sys
+from pathlib import Path
+
+from flask import Flask, jsonify, render_template, request
+
+sys.path.insert(0, os.path.dirname(__file__))
+
+from agents.scraper import JobScraper
+from extractors.job_extractor import JobExtractor
+from matchers.resume_matcher import ResumeMatcher
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+
+app = Flask(__name__)
+
+BASE_DIR = Path(__file__).parent
+DEFAULT_RESUME_PATH = BASE_DIR / "resume" / "resume.txt"
+DEFAULT_MOCK_PATH = BASE_DIR / "data" / "mock_careers.html"
+
+
+def load_resume_text(resume_path: Path = DEFAULT_RESUME_PATH) -> str:
+    with open(resume_path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+def run_pipeline(source: dict):
+    scraper = JobScraper(max_retries=2, backoff_seconds=1.0)
+    extractor = JobExtractor()
+    matcher = ResumeMatcher(load_resume_text())
+
+    raw_jobs = scraper.scrape_source(source)
+    jobs = extractor.extract_many(raw_jobs)
+    results = matcher.match_many(jobs)
+    return [r.to_dict() for r in results]
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/api/match", methods=["POST"])
+def match_jobs():
+    data = request.get_json(silent=True) or {}
+    source_type = data.get("source", "mock")
+
+    if source_type == "mock":
+        source = {
+            "name": "Mock Tech Careers",
+            "url": "file://" + str(DEFAULT_MOCK_PATH.resolve()),
+            "type": "static",
+            "selectors": {
+                "container": "article.job-card",
+                "title": "h2.job-title",
+                "link": "a",
+            },
+        }
+    else:
+        url = data.get("url", "").strip()
+        if not url:
+            return jsonify({"error": "URL is required for custom sources."}), 400
+        source = {
+            "name": data.get("name", "Custom Source") or "Custom Source",
+            "url": url,
+            "type": data.get("type", "static"),
+            "selectors": {
+                "container": data.get("container", "").strip() or "article, .job-card, .job-listing",
+                "title": data.get("title", "").strip() or "h2, h3, .job-title",
+                "link": data.get("link", "").strip() or "a",
+            },
+        }
+
+    try:
+        results = run_pipeline(source)
+        return jsonify({"jobs": results})
+    except Exception as exc:
+        logging.exception("Pipeline failed")
+        return jsonify({"error": str(exc)}), 500
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000, debug=True)

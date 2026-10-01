@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Search Agent</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --border: #e5e7eb;
+      --success: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 1.8rem; }
+
+    p.subtitle { margin: 0; color: var(--muted); }
+
+    .controls {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1 1 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    input, select, button {
+      font-size: 1rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    input { width: 100%; }
+
+    .custom-fields { width: 100%; }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      min-width: 140px;
+    }
+
+    button:hover { background: var(--accent-hover); }
+    button:disabled { background: #93c5fd; cursor: not-allowed; }
+
+    .status {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .job-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .job-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .job-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .job-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .job-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      white-space: nowrap;
+    }
+
+    .score-bar {
+      width: 80px;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .score.high { color: var(--success); }
+    .score.medium { color: var(--warn); }
+    .score.low { color: var(--danger); }
+
+    .score.high .score-fill { background: var(--success); }
+    .score.medium .score-fill { background: var(--warn); }
+    .score.low .score-fill { background: var(--danger); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
+    .tag.missing {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin: 12px 0 6px;
+    }
+
+    .learning-plan {
+      padding-left: 18px;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .learning-plan li { margin-bottom: 4px; }
+
+    .hidden { display: none; }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 48px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Job Search Agent</h1>
+      <p class="subtitle">Match job postings against your resume and get a learning plan.</p>
+    </header>
+
+    <div class="controls">
+      <div class="field" style="flex: 1 1 100%;">
+        <label for="source">Source</label>
+        <select id="source" onchange="toggleCustom()">
+          <option value="mock">Mock Tech Careers (local demo)</option>
+          <option value="custom">Custom URL</option>
+        </select>
+      </div>
+
+      <div id="customFields" class="custom-fields hidden" style="width: 100%; display: flex; flex-wrap: wrap; gap: 16px;">
+        <div class="field" style="flex: 1 1 100%;">
+          <label for="url">Career Page URL</label>
+          <input id="url" type="url" placeholder="https://example.com/careers">
+        </div>
+        <div class="field" style="flex: 1 1 200px;">
+          <label for="type">Fetch Type</label>
+          <select id="type">
+            <option value="static">Static (fast)</option>
+            <option value="dynamic">Dynamic (Selenium, for JS sites)</option>
+          </select>
+        </div>
+        <div class="field" style="flex: 1 1 200px;">
+          <label for="container">Job Container Selector</label>
+          <input id="container" type="text" placeholder="article.job-card" value="article, .job-card, .job-listing">
+        </div>
+        <div class="field" style="flex: 1 1 200px;">
+          <label for="title">Title Selector</label>
+          <input id="title" type="text" placeholder="h2.job-title" value="h2, h3, .job-title">
+        </div>
+        <div class="field" style="flex: 1 1 200px;">
+          <label for="link">Link Selector</label>
+          <input id="link" type="text" placeholder="a" value="a">
+        </div>
+      </div>
+
+      <button id="runBtn" onclick="runMatch()">Run Matching</button>
+    </div>
+
+    <div id="status" class="status hidden"></div>
+
+    <div id="results" class="job-list"></div>
+  </div>
+
+  <script>
+    function setStatus(msg, isError = false) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      el.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+    }
+
+    function scoreClass(score) {
+      if (score >= 0.6) return 'high';
+      if (score >= 0.3) return 'medium';
+      return 'low';
+    }
+
+    function renderJobs(jobs) {
+      const container = document.getElementById('results');
+      container.innerHTML = '';
+
+      if (!jobs.length) {
+        container.innerHTML = '<div class="empty">No jobs matched.</div>';
+        return;
+      }
+
+      jobs.forEach((job, idx) => {
+        const scorePct = Math.round(job.match_score * 100);
+        const scoreCls = scoreClass(job.match_score);
+        const card = document.createElement('div');
+        card.className = 'job-card';
+
+        const matchedTags = job.matched_skills.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('');
+        const missingTags = job.missing_skills.map(s => `<span class="tag missing">${escapeHtml(s)}</span>`).join('');
+        const learningItems = job.learning_plan.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+
+        card.innerHTML = `
+          <div class="job-header">
+            <div>
+              <h2 class="job-title">${idx + 1}. ${escapeHtml(job.job_title)}</h2>
+              <div class="job-meta">
+                ${escapeHtml(job.company)} · ${escapeHtml(job.location)} · Deadline: ${escapeHtml(job.deadline)}
+              </div>
+            </div>
+            <div class="score ${scoreCls}">
+              <div class="score-bar"><div class="score-fill" style="width: ${scorePct}%"></div></div>
+              ${scorePct}%
+            </div>
+          </div>
+          <div class="section-title">Matched Skills</div>
+          <div class="tags">${matchedTags || '<span class="tag">None</span>'}</div>
+          <div class="section-title">Missing Skills</div>
+          <div class="tags">${missingTags || '<span class="tag">None</span>'}</div>
+          <div class="section-title">Experience Gap</div>
+          <p>${escapeHtml(job.experience_gap)}</p>
+          <div class="section-title">Learning Plan</div>
+          <ul class="learning-plan">${learningItems}</ul>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function toggleCustom() {
+      const source = document.getElementById('source').value;
+      document.getElementById('customFields').classList.toggle('hidden', source !== 'custom');
+    }
+
+    async function runMatch() {
+      const btn = document.getElementById('runBtn');
+      btn.disabled = true;
+      setStatus('Running job matching...');
+      document.getElementById('results').innerHTML = '';
+
+      try {
+        const source = document.getElementById('source').value;
+        const payload = { source };
+
+        if (source === 'custom') {
+          payload.url = document.getElementById('url').value.trim();
+          payload.type = document.getElementById('type').value;
+          payload.container = document.getElementById('container').value.trim();
+          payload.title = document.getElementById('title').value.trim();
+          payload.link = document.getElementById('link').value.trim();
+        }
+
+        const resp = await fetch('/api/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.error || `HTTP ${resp.status}`);
+        }
+
+        setStatus(`Found ${data.jobs.length} matched jobs.`);
+        renderJobs(data.jobs);
+      } catch (err) {
+        setStatus(`Error: ${err.message}`, true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
