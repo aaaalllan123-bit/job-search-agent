@@ -26,6 +26,30 @@ BASE_DIR = Path(__file__).parent
 DEFAULT_RESUME_PATH = BASE_DIR / "resume" / "resume.txt"
 DEFAULT_MOCK_PATH = BASE_DIR / "data" / "mock_careers.html"
 
+PRESET_SOURCES = {
+    "mock": {
+        "name": "Mock Tech Careers",
+        "url": "file://" + str(DEFAULT_MOCK_PATH.resolve()),
+        "type": "static",
+        "selectors": {
+            "container": "article.job-card",
+            "title": "h2.job-title",
+            "link": "a",
+        },
+    },
+    "geotab": {
+        "name": "Geotab Internships",
+        "url": "https://job-boards.greenhouse.io/internshiplist2000/jobs/4969991008",
+        "type": "static",
+        "follow_links": True,
+        "selectors": {
+            "container": ".job-post",
+            "title": "a",
+            "link": "a",
+        },
+    },
+}
+
 
 def load_resume_text(resume_path: Path = DEFAULT_RESUME_PATH) -> str:
     with open(resume_path, "r", encoding="utf-8") as f:
@@ -48,23 +72,19 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/api/presets")
+def presets():
+    return jsonify({"presets": list(PRESET_SOURCES.keys())})
+
+
 @app.route("/api/match", methods=["POST"])
 def match_jobs():
     data = request.get_json(silent=True) or {}
     source_type = data.get("source", "mock")
 
-    if source_type == "mock":
-        source = {
-            "name": "Mock Tech Careers",
-            "url": "file://" + str(DEFAULT_MOCK_PATH.resolve()),
-            "type": "static",
-            "selectors": {
-                "container": "article.job-card",
-                "title": "h2.job-title",
-                "link": "a",
-            },
-        }
-    else:
+    if source_type in PRESET_SOURCES:
+        source = PRESET_SOURCES[source_type]
+    elif source_type == "custom":
         url = data.get("url", "").strip()
         if not url:
             return jsonify({"error": "URL is required for custom sources."}), 400
@@ -78,6 +98,8 @@ def match_jobs():
                 "link": data.get("link", "").strip() or "a",
             },
         }
+    else:
+        return jsonify({"error": f"Unknown source: {source_type}"}), 400
 
     try:
         results = run_pipeline(source)

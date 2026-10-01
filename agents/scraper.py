@@ -124,7 +124,7 @@ class JobScraper:
                     return containers, selectors
         return None, None
 
-    def _parse_postings(self, html: str, source_name: str, url: str, selectors: Optional[dict] = None) -> List[RawJobPosting]:
+    def _parse_postings(self, html: str, source_name: str, url: str, selectors: Optional[dict] = None, follow_links: bool = False, source_type: str = "static") -> List[RawJobPosting]:
         soup = BeautifulSoup(html, "html.parser")
         postings: List[RawJobPosting] = []
 
@@ -189,6 +189,18 @@ class JobScraper:
                         job_url = urljoin(url, link["href"])
                         break
 
+            # Optionally fetch detail page to enrich job description.
+            if follow_links and job_url != url:
+                try:
+                    if source_type == "dynamic":
+                        detail_html = self.fetch_dynamic(job_url)
+                    else:
+                        detail_html = self.fetch_static(job_url)
+                    detail_text = BeautifulSoup(detail_html, "html.parser").get_text(separator="\n", strip=True)
+                    text = text + "\n\n" + detail_text
+                except Exception as exc:
+                    logger.warning("Failed to fetch detail page %s: %s", job_url, exc)
+
             postings.append(
                 RawJobPosting(
                     title=title,
@@ -207,10 +219,11 @@ class JobScraper:
         source_name = source.get("name", url)
         source_type = source.get("type", "static")
         selectors = source.get("selectors")
+        follow_links = source.get("follow_links", False)
 
         if source_type == "dynamic":
             html = self.fetch_dynamic(url)
         else:
             html = self.fetch_static(url)
 
-        return self._parse_postings(html, source_name, url, selectors)
+        return self._parse_postings(html, source_name, url, selectors, follow_links=follow_links, source_type=source_type)

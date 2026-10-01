@@ -52,7 +52,14 @@ class JobExtractor:
             found.add(match.group(0).lower())
         return sorted(found)
 
-    def extract_location(self, text: str) -> str:
+    def extract_location(self, text: str, title: str = "") -> str:
+        # Greenhouse-style titles often embed location after the job title.
+        # e.g. "Software Developer Intern (Winter/January 2027, 4-8 Months)Oakville, Ontario - Canada; Waterloo, Ontario - Canada"
+        if title:
+            m = re.search(r"[)\]]([A-Z][A-Za-z\s,./\-]+(?:;\s*[A-Z][A-Za-z\s,./\-]+)*)", title)
+            if m:
+                return m.group(1).strip()
+
         # Common patterns: "Location: City, ST" or "City, ST / Remote"
         patterns = [
             r"Location\s*[:\-]\s*([A-Za-z][A-Za-z\s,./\-]+?)(?:\.|\n|$)",
@@ -63,6 +70,13 @@ class JobExtractor:
             if match:
                 return match.group(1).strip()
         return "Unknown"
+
+    def clean_title(self, title: str) -> str:
+        # Strip trailing location segment from Greenhouse-style titles.
+        m = re.search(r"(.+?[)\]])\s*[A-Z][A-Za-z\s,./\-]+(?:;\s*[A-Z][A-Za-z\s,./\-]+)*$", title)
+        if m:
+            return m.group(1).strip()
+        return title.strip()
 
     def extract_experience(self, text: str) -> str:
         patterns = [
@@ -94,10 +108,11 @@ class JobExtractor:
 
     def extract(self, raw_posting) -> JobPosting:
         text = raw_posting.raw_text
+        cleaned_title = self.clean_title(raw_posting.title)
         return JobPosting(
-            title=raw_posting.title,
+            title=cleaned_title,
             company=raw_posting.company,
-            location=self.extract_location(text),
+            location=self.extract_location(text, raw_posting.title),
             url=raw_posting.url,
             tech_stack=self.extract_tech_stack(text),
             experience_required=self.extract_experience(text),
