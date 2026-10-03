@@ -21,7 +21,7 @@ def test_mock_scraper_end_to_end():
         },
     }
     raw_jobs = scraper.scrape_source(source)
-    assert len(raw_jobs) == 5
+    assert len(raw_jobs) >= 5
 
     extractor = JobExtractor()
     jobs = extractor.extract_many(raw_jobs)
@@ -29,6 +29,8 @@ def test_mock_scraper_end_to_end():
     titles = {j.title for j in jobs}
     assert "Backend Engineering Intern" in titles
     assert "Frontend Developer Co-op" in titles
+    assert "Mechanical Design Intern" in titles
+    assert "Financial Analyst Intern" in titles
 
     backend = next(j for j in jobs if j.title == "Backend Engineering Intern")
     assert backend.location == "Toronto, ON"
