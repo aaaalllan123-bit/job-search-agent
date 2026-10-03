@@ -50,16 +50,28 @@ PRESET_SOURCES = {
     },
 }
 
+FIELD_RESUME_FILES = {
+    "cs": BASE_DIR / "resume" / "resume_cs.txt",
+    "finance": BASE_DIR / "resume" / "resume_finance.txt",
+    "marketing": BASE_DIR / "resume" / "resume_marketing.txt",
+    "design": BASE_DIR / "resume" / "resume_design.txt",
+    "biomed": BASE_DIR / "resume" / "resume_biomed.txt",
+    "social": BASE_DIR / "resume" / "resume_social.txt",
+}
 
-def load_resume_text(resume_path: Path = DEFAULT_RESUME_PATH) -> str:
-    with open(resume_path, "r", encoding="utf-8") as f:
+
+def load_resume_text(field: str) -> str:
+    path = FIELD_RESUME_FILES.get(field, DEFAULT_RESUME_PATH)
+    if not path.exists():
+        path = DEFAULT_RESUME_PATH
+    with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
 
-def run_pipeline(source: dict):
+def run_pipeline(source: dict, field: str = "cs"):
     scraper = JobScraper(max_retries=2, backoff_seconds=1.0)
-    extractor = JobExtractor()
-    matcher = ResumeMatcher(load_resume_text())
+    extractor = JobExtractor(field=field)
+    matcher = ResumeMatcher(load_resume_text(field), field=field)
 
     raw_jobs = scraper.scrape_source(source)
     jobs = extractor.extract_many(raw_jobs)
@@ -101,8 +113,9 @@ def match_jobs():
     else:
         return jsonify({"error": f"Unknown source: {source_type}"}), 400
 
+    field = data.get("field", "cs").strip().lower()
     try:
-        results = run_pipeline(source)
+        results = run_pipeline(source, field=field)
         return jsonify({"jobs": results})
     except Exception as exc:
         logging.exception("Pipeline failed")

@@ -222,7 +222,19 @@
     </header>
 
     <div class="controls">
-      <div class="field" style="flex: 1 1 100%;">
+      <div class="field" style="flex: 1 1 48%;">
+        <label for="field">Major / Field</label>
+        <select id="field">
+          <option value="cs">Computer Science / Engineering</option>
+          <option value="finance">Finance / Business</option>
+          <option value="marketing">Marketing / Communications</option>
+          <option value="design">Design / UI-UX</option>
+          <option value="biomed">Biomedical / Life Sciences</option>
+          <option value="social">Social Sciences / Education</option>
+        </select>
+      </div>
+
+      <div class="field" style="flex: 1 1 48%;">
         <label for="source">Source</label>
         <select id="source" onchange="toggleCustom()">
           <option value="mock">Mock Tech Careers (local demo)</option>
@@ -343,7 +355,8 @@
 
       try {
         const source = document.getElementById('source').value;
-        const payload = { source };
+        const field = document.getElementById('field').value;
+        const payload = { source, field };
 
         if (source === 'custom') {
           payload.url = document.getElementById('url').value.trim();

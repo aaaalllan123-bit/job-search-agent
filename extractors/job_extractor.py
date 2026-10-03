@@ -24,25 +24,76 @@ class JobPosting:
     source: str
 
 
-# Common technical skills and keywords
-TECH_KEYWORDS = [
-    "python", "c", "c++", "java", "javascript", "typescript", "go", "rust",
-    "ruby", "php", "swift", "kotlin", "scala", "r", "matlab",
-    "html", "css", "react", "vue", "angular", "svelte", "node.js", "nodejs",
-    "django", "flask", "fastapi", "spring", "express", "rails",
-    "sql", "postgresql", "mysql", "sqlite", "mongodb", "redis", "elasticsearch",
-    "aws", "azure", "gcp", "docker", "kubernetes", "terraform", "jenkins",
-    "git", "linux", "unix", "bash", "shell", "powershell",
-    "machine learning", "deep learning", "tensorflow", "pytorch", "pandas", "numpy",
-    "spark", "hadoop", "kafka", "airflow",
-    "rest", "graphql", "grpc", "api", "microservices",
-]
+# Skills by major/field. Extractor uses the union; matcher uses a per-field resume.
+SKILL_KEYWORDS = {
+    "cs": [
+        "python", "c", "c++", "java", "javascript", "typescript", "go", "rust",
+        "ruby", "php", "swift", "kotlin", "scala", "r", "matlab",
+        "html", "css", "react", "vue", "angular", "svelte", "node.js", "nodejs",
+        "django", "flask", "fastapi", "spring", "express", "rails",
+        "sql", "postgresql", "mysql", "sqlite", "mongodb", "redis", "elasticsearch",
+        "aws", "azure", "gcp", "docker", "kubernetes", "terraform", "jenkins",
+        "git", "linux", "unix", "bash", "shell", "powershell",
+        "machine learning", "deep learning", "tensorflow", "pytorch", "pandas", "numpy",
+        "spark", "hadoop", "kafka", "airflow",
+        "rest", "graphql", "grpc", "api", "microservices",
+    ],
+    "finance": [
+        "excel", "financial modeling", "valuation", "dcf", "lbo", "npv", "irr",
+        "accounting", "bookkeeping", "quickbooks", "sap", "erp",
+        "bloomberg", "bloomberg terminal", "capital iq", "factset", "refinitiv",
+        "investment", "investment banking", "asset management", "portfolio management",
+        "trading", "equity research", "credit analysis", "risk management",
+        "python", "sql", "vba", "r", "stata", "sas", "tableau", "power bi",
+        "statistics", "econometrics", "forecasting",
+    ],
+    "marketing": [
+        "marketing", "digital marketing", "content marketing", "email marketing",
+        "seo", "sem", "google analytics", "google ads", "facebook ads", "meta ads",
+        "social media", "content creation", "copywriting", "brand management",
+        "market research", "survey design", "customer segmentation",
+        "salesforce", "hubspot", "mailchimp", "hootsuite", "canva",
+        "python", "sql", "excel", "tableau", "power bi", "google sheets",
+        "adobe creative suite", "photoshop", "illustrator", "premiere",
+    ],
+    "design": [
+        "ui", "ux", "ui/ux", "user research", "wireframing", "prototyping",
+        "figma", "sketch", "adobe xd", "invision", "balsamiq",
+        "photoshop", "illustrator", "indesign", "after effects", "premiere",
+        "typography", "color theory", "design systems", "accessibility", "wcag",
+        "html", "css", "javascript", "react", "web design", "responsive design",
+        "motion graphics", "3d modeling", "blender", "cinema 4d",
+    ],
+    "biomed": [
+        "lab techniques", "cell culture", "pcr", "gel electrophoresis", "western blot",
+        "microscopy", "flow cytometry", "immunohistochemistry", "elisa",
+        "clinical research", "clinical trials", "gcp", "regulatory affairs",
+        "matlab", "r", "python", "spss", "sas", "graphpad prism",
+        "biostatistics", "bioinformatics", "genomics", "proteomics",
+        "medical devices", "fda", "iso 13485", "quality assurance",
+    ],
+    "social": [
+        "research", "qualitative research", "quantitative research", "survey design",
+        "spss", "r", "stata", "python", "excel", "statistics",
+        "academic writing", "apa", "literature review", "data collection",
+        "interviewing", "focus groups", "ethnography", "case study",
+        "policy analysis", "program evaluation", "social impact",
+        "teaching", "tutoring", "curriculum design", "classroom management",
+    ],
+}
+
+# Backwards-compatible alias.
+TECH_KEYWORDS = []
+for _keywords in SKILL_KEYWORDS.values():
+    TECH_KEYWORDS.extend(_keywords)
 
 
 class JobExtractor:
-    def __init__(self):
+    def __init__(self, field: str = "cs"):
+        self.field = (field or "cs").lower()
+        self.keywords = SKILL_KEYWORDS.get(self.field, SKILL_KEYWORDS["cs"])
         self.tech_pattern = re.compile(
-            r"\b(" + "|".join(re.escape(k) for k in TECH_KEYWORDS) + r")\b",
+            r"\b(" + "|".join(re.escape(k) for k in self.keywords) + r")\b",
             re.IGNORECASE,
         )
 

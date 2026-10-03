@@ -40,17 +40,19 @@ class MatchResult:
 
 
 class ResumeMatcher:
-    def __init__(self, resume_text: str):
+    def __init__(self, resume_text: str, field: str = "cs"):
+        self.field = (field or "cs").lower()
         self.resume_text = resume_text.lower()
         self.resume_skills = self._extract_skills(resume_text)
-        logger.info("Loaded resume with %d skills", len(self.resume_skills))
+        logger.info("Loaded %s resume with %d skills", self.field, len(self.resume_skills))
 
     def _extract_skills(self, text: str) -> set:
-        from extractors.job_extractor import TECH_KEYWORDS
+        from extractors.job_extractor import SKILL_KEYWORDS
 
         text = text.lower()
+        keywords = SKILL_KEYWORDS.get(self.field, [])
         skills = set()
-        for skill in TECH_KEYWORDS:
+        for skill in keywords:
             if skill.lower() in text:
                 skills.add(skill.lower())
         return skills
@@ -66,19 +68,51 @@ class ResumeMatcher:
         if not missing:
             return ["You already match the core skills. Focus on interview prep and portfolio projects."]
 
-        # Group by category for nicer output
+        # Group by category for nicer output; varies by field.
         categories = {
-            "programming": ["python", "c", "c++", "java", "javascript", "typescript", "go", "rust"],
-            "web": ["html", "css", "react", "vue", "angular", "node.js", "flask", "django"],
-            "data": ["sql", "postgresql", "mysql", "mongodb", "pandas", "numpy"],
-            "cloud/devops": ["aws", "azure", "gcp", "docker", "kubernetes", "git", "linux"],
-            "ml": ["machine learning", "deep learning", "tensorflow", "pytorch"],
+            "cs": {
+                "programming": ["python", "c", "c++", "java", "javascript", "typescript", "go", "rust"],
+                "web": ["html", "css", "react", "vue", "angular", "node.js", "flask", "django"],
+                "data": ["sql", "postgresql", "mysql", "mongodb", "pandas", "numpy"],
+                "cloud/devops": ["aws", "azure", "gcp", "docker", "kubernetes", "git", "linux"],
+                "ml": ["machine learning", "deep learning", "tensorflow", "pytorch"],
+            },
+            "finance": {
+                "modeling": ["financial modeling", "valuation", "dcf", "lbo", "npv", "irr"],
+                "tools": ["excel", "bloomberg", "capital iq", "factset", "refinitiv", "quickbooks", "sap"],
+                "analysis": ["accounting", "investment", "portfolio management", "risk management", "equity research"],
+                "data": ["python", "sql", "r", "stata", "sas", "tableau", "power bi", "statistics"],
+            },
+            "marketing": {
+                "channels": ["seo", "sem", "social media", "email marketing", "content marketing", "digital marketing"],
+                "tools": ["google analytics", "google ads", "facebook ads", "meta ads", "salesforce", "hubspot", "mailchimp", "hootsuite", "canva"],
+                "skills": ["content creation", "copywriting", "brand management", "market research", "customer segmentation"],
+                "data": ["python", "sql", "excel", "tableau", "power bi"],
+            },
+            "design": {
+                "ui/ux": ["ui", "ux", "ui/ux", "user research", "wireframing", "prototyping", "design systems", "accessibility"],
+                "tools": ["figma", "sketch", "adobe xd", "photoshop", "illustrator", "indesign", "after effects", "premiere"],
+                "dev": ["html", "css", "javascript", "react", "web design", "responsive design"],
+                "motion/3d": ["motion graphics", "3d modeling", "blender", "cinema 4d"],
+            },
+            "biomed": {
+                "lab": ["lab techniques", "cell culture", "pcr", "gel electrophoresis", "western blot", "microscopy", "flow cytometry", "immunohistochemistry", "elisa"],
+                "research": ["clinical research", "clinical trials", "gcp", "regulatory affairs", "medical devices", "fda", "iso 13485", "quality assurance"],
+                "data": ["matlab", "r", "python", "spss", "sas", "graphpad prism", "biostatistics", "bioinformatics", "genomics", "proteomics"],
+            },
+            "social": {
+                "methods": ["research", "qualitative research", "quantitative research", "survey design", "interviewing", "focus groups", "ethnography", "case study"],
+                "data": ["spss", "r", "stata", "python", "excel", "statistics"],
+                "writing": ["academic writing", "apa", "literature review", "data collection"],
+                "practice": ["policy analysis", "program evaluation", "social impact", "teaching", "tutoring", "curriculum design", "classroom management"],
+            },
         }
+        field_categories = categories.get(self.field, categories["cs"])
 
         grouped = {}
         for skill in missing:
             assigned = False
-            for cat, items in categories.items():
+            for cat, items in field_categories.items():
                 if skill.lower() in items:
                     grouped.setdefault(cat, []).append(skill)
                     assigned = True

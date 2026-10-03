@@ -1,0 +1,4 @@
+Computer Science student with coursework in data structures, algorithms, and software engineering.
+Skills: Python, C, C++, Java, JavaScript, TypeScript, HTML, CSS, React, SQL, Git, Linux.
+Experience building web apps with Flask and Node.js.
+Familiar with machine learning, pandas, numpy, and REST APIs.
