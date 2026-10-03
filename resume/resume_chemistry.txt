@@ -1,0 +1,4 @@
+Chemistry student with coursework in organic, analytical, physical, and biochemistry.
+Skills: synthesis, chromatography, spectroscopy, NMR, HPLC, GC-MS, wet lab techniques.
+Experience with laboratory experiments and chemical safety protocols.
+Familiar with Python, R, MATLAB, Origin, and ChemDraw.

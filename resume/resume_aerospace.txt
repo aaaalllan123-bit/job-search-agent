@@ -1,0 +1,4 @@
+Aerospace Engineering student with coursework in aerodynamics, propulsion, and flight mechanics.
+Skills: aerodynamics, CFD, FEA, CATIA, NX, SolidWorks, composite materials, systems engineering.
+Experience with design projects involving aircraft and spacecraft systems.
+Familiar with MATLAB, Simulink, Python, C, and C++.

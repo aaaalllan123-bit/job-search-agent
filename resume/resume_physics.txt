@@ -1,0 +1,4 @@
+Physics student with coursework in mechanics, electromagnetism, quantum mechanics, and optics.
+Skills: Python, MATLAB, Mathematica, C, C++, data analysis, experimental design.
+Experience with laboratory experiments and computational physics simulations.
+Familiar with scientific computing and quantitative research methods.

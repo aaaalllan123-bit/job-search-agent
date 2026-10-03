@@ -1,0 +1,4 @@
+Mathematics and Statistics student with coursework in probability, linear algebra, and numerical analysis.
+Skills: Python, R, MATLAB, SQL, Excel, Tableau, Power BI, statistics, modeling, optimization.
+Experience with data analysis, mathematical modeling, and statistical inference.
+Familiar with machine learning and scientific computing.

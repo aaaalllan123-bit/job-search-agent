@@ -1,0 +1,4 @@
+Electrical Engineering student with coursework in circuit design, signal processing, and embedded systems.
+Skills: circuit design, PCB design, Altium, Verilog, FPGA, microcontrollers, Arduino, ARM.
+Experience building and debugging electronic prototypes.
+Familiar with MATLAB, Simulink, C, C++, and control systems.

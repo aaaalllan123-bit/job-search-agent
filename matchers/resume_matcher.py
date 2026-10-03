@@ -106,6 +106,112 @@ class ResumeMatcher:
                 "writing": ["academic writing", "apa", "literature review", "data collection"],
                 "practice": ["policy analysis", "program evaluation", "social impact", "teaching", "tutoring", "curriculum design", "classroom management"],
             },
+            "mechanical": {
+                "cad": ["solidworks", "autocad", "catia", "nx", "inventor", "fusion 360"],
+                "analysis": ["fea", "finite element analysis", "cfd", "computational fluid dynamics", "gd&t", "tolerance analysis"],
+                "core": ["mechanical design", "thermodynamics", "fluid mechanics", "heat transfer", "materials science", "manufacturing"],
+                "tools": ["matlab", "python", "labview", "arduino", "plc", "3d printing", "cnc", "machining"],
+            },
+            "electrical": {
+                "design": ["circuit design", "pcb design", "altium", "eagle", "kicad", "orcad"],
+                "digital": ["verilog", "vhdl", "fpga", "asic", "embedded systems", "microcontrollers", "arm", "stm32"],
+                "core": ["signal processing", "control systems", "power electronics", "rf", "wireless"],
+                "tools": ["matlab", "simulink", "python", "c", "c++", "labview", "arduino", "raspberry pi"],
+            },
+            "civil": {
+                "software": ["autocad", "civil 3d", "revit", "bentley", "microstation", "bim", "etabs", "sap2000", "safe"],
+                "core": ["structural analysis", "structural design", "concrete", "steel", "timber", "geotechnical", "transportation", "water resources"],
+                "practice": ["surveying", "construction management", "project scheduling", "rs means"],
+                "tools": ["matlab", "python", "excel"],
+            },
+            "chemical": {
+                "software": ["aspen plus", "hysys", "chemcad", "process simulation"],
+                "core": ["process design", "reactor design", "separation processes", "thermodynamics", "transport phenomena", "process control", "mass balance", "energy balance"],
+                "domains": ["polymer", "catalysis", "petrochemicals", "pharmaceuticals"],
+                "tools": ["matlab", "python", "excel", "labview", "six sigma", "lean"],
+            },
+            "aerospace": {
+                "core": ["aerodynamics", "propulsion", "flight mechanics", "orbital mechanics", "systems engineering"],
+                "materials/structures": ["structural analysis", "composite materials", "fea", "finite element analysis"],
+                "software": ["catia", "nx", "solidworks", "cfd", "computational fluid dynamics"],
+                "tools": ["matlab", "simulink", "python", "c", "c++", "arduino", "gnc", "guidance navigation control"],
+            },
+            "industrial": {
+                "core": ["operations research", "optimization", "linear programming", "supply chain", "logistics", "inventory management", "production planning", "scheduling"],
+                "quality": ["lean manufacturing", "six sigma", "process improvement", "quality control", "statistical process control"],
+                "ergonomics": ["ergonomics", "simulation"],
+                "tools": ["excel", "python", "r", "sql", "matlab", "arena", "anylogic"],
+            },
+            "materials": {
+                "characterization": ["materials characterization", "microscopy", "sem", "tem", "xrd", "imagej"],
+                "testing": ["mechanical testing", "tensile testing", "hardness testing", "fatigue"],
+                "domains": ["metallurgy", "polymers", "ceramics", "composites", "nanomaterials"],
+                "core/tools": ["thermodynamics", "phase diagrams", "materials selection", "matlab", "python", "origin"],
+            },
+            "environmental": {
+                "core": ["environmental science", "water quality", "air quality", "soil remediation", "wastewater treatment", "solid waste management", "sustainability"],
+                "assessment": ["environmental impact assessment", "eia", "life cycle assessment", "lca"],
+                "geospatial": ["gis", "arcgis", "qgis", "remote sensing", "hydrology", "hydrogeology"],
+                "tools": ["python", "r", "matlab", "excel"],
+            },
+            "math": {
+                "core": ["mathematics", "statistics", "probability", "linear algebra", "calculus", "differential equations", "numerical analysis", "optimization", "modeling"],
+                "data": ["python", "r", "matlab", "sas", "stata", "spss", "sql", "excel", "tableau", "power bi", "data analysis"],
+                "ml": ["machine learning"],
+            },
+            "physics": {
+                "core": ["physics", "mechanics", "electromagnetism", "quantum mechanics", "thermodynamics", "optics", "condensed matter", "particle physics", "astrophysics"],
+                "methods": ["experimental design", "data analysis", "scientific computing"],
+                "tools": ["python", "matlab", "mathematica", "c", "c++", "root", "labview"],
+            },
+            "chemistry": {
+                "core": ["organic chemistry", "inorganic chemistry", "analytical chemistry", "physical chemistry", "biochemistry", "synthesis"],
+                "analytical": ["chromatography", "spectroscopy", "nmr", "mass spectrometry", "hplc", "gc-ms", "wet lab"],
+                "practice": ["chemical safety", "quality control"],
+                "tools": ["python", "r", "matlab", "origin", "chemdraw"],
+            },
+            "medicine": {
+                "clinical": ["clinical research", "patient care", "medical terminology", "anatomy", "physiology", "medical imaging"],
+                "public health": ["biostatistics", "epidemiology", "public health"],
+                "systems": ["emr", "electronic medical records", "hipaa", "clinical trials"],
+                "tools": ["python", "r", "spss", "sas", "excel"],
+            },
+            "law": {
+                "core": ["legal research", "legal writing", "case law", "contracts", "litigation", "due diligence", "regulatory compliance", "corporate law", "intellectual property"],
+                "tools": ["westlaw", "lexisnexis", "bluebook", "brief writing"],
+                "soft skills": ["negotiation"],
+                "data": ["excel", "python", "sql", "data analysis", "document review"],
+            },
+            "architecture": {
+                "design": ["architectural design", "space planning", "3d modeling", "rendering"],
+                "software": ["revit", "autocad", "sketchup", "rhino", "grasshopper", "bim"],
+                "rendering": ["v-ray", "lumion", "enscape"],
+                "docs/presentation": ["building codes", "construction documents", "adobe creative suite", "photoshop", "illustrator", "indesign"],
+            },
+            "supply_chain": {
+                "core": ["supply chain management", "logistics", "procurement", "inventory management", "demand planning", "warehouse management", "transportation", "distribution"],
+                "systems": ["erp", "sap", "oracle", "netsuite"],
+                "quality": ["six sigma", "lean"],
+                "data": ["excel", "python", "sql", "tableau", "power bi", "data analysis"],
+            },
+            "hr": {
+                "core": ["human resources", "recruiting", "talent acquisition", "onboarding", "employee relations", "performance management", "compensation", "benefits"],
+                "systems": ["hris", "workday"],
+                "analytics": ["people analytics", "diversity and inclusion", "training and development"],
+                "data": ["excel", "python", "sql", "tableau", "power bi", "data analysis"],
+            },
+            "media": {
+                "journalism": ["journalism", "reporting", "news writing", "feature writing", "editing"],
+                "production": ["broadcasting", "video production", "audio production", "podcasting"],
+                "digital": ["social media", "content creation", "seo", "digital storytelling"],
+                "tools": ["adobe creative suite", "premiere", "after effects", "audition", "photoshop", "excel", "python", "data journalism"],
+            },
+            "policy": {
+                "core": ["public policy", "policy analysis", "program evaluation", "legislative analysis", "stakeholder engagement", "grant writing", "budget analysis"],
+                "methods": ["economics", "econometrics", "statistics", "research methods"],
+                "data": ["python", "r", "stata", "spss", "excel", "tableau"],
+                "geospatial": ["gis", "arcgis"],
+            },
         }
         field_categories = categories.get(self.field, categories["cs"])
 
