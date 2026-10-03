@@ -26,84 +26,7 @@ BASE_DIR = Path(__file__).parent
 DEFAULT_RESUME_PATH = BASE_DIR / "resume" / "resume.txt"
 DEFAULT_MOCK_PATH = BASE_DIR / "data" / "mock_careers.html"
 
-PRESET_SOURCES = {
-    "mock": {
-        "name": "Mock Careers Board (multi-major)",
-        "url": "file://" + str(DEFAULT_MOCK_PATH.resolve()),
-        "type": "static",
-        "selectors": {
-            "container": "article.job-card",
-            "title": "h2.job-title",
-            "link": "a",
-        },
-    },
-    "geotab": {
-        "name": "Geotab Internships",
-        "url": "https://job-boards.greenhouse.io/internshiplist2000/jobs/4969991008",
-        "type": "static",
-        "follow_links": True,
-        "selectors": {
-            "container": ".job-post",
-            "title": "a",
-            "link": "a",
-        },
-    },
-    "rocketlab": {
-        "name": "Rocket Lab - Mechanical / Aerospace Internships",
-        "url": "https://job-boards.greenhouse.io/rocketlab/jobs/7986368003",
-        "type": "static",
-        "follow_links": True,
-        "selectors": {
-            "container": ".job-post",
-            "title": "a",
-            "link": "a",
-        },
-    },
-    "syska_electrical": {
-        "name": "Syska Hennessy - Electrical Engineering Intern",
-        "url": "https://job-boards.greenhouse.io/syskahennessy/jobs/7286246",
-        "type": "static",
-        "follow_links": True,
-        "selectors": {
-            "container": ".job-post",
-            "title": "a",
-            "link": "a",
-        },
-    },
-    "urban_civil": {
-        "name": "Urban Systems - Civil Engineering Co-op",
-        "url": "https://boards.greenhouse.io/urbansystems",
-        "type": "static",
-        "follow_links": True,
-        "selectors": {
-            "container": ".job-post",
-            "title": "a",
-            "link": "a",
-        },
-    },
-    "alamar_biotech": {
-        "name": "Alamar Biosciences - Biotech Internships",
-        "url": "https://job-boards.greenhouse.io/alamarbiosciences/jobs/5832299004",
-        "type": "static",
-        "follow_links": True,
-        "selectors": {
-            "container": ".job-post",
-            "title": "a",
-            "link": "a",
-        },
-    },
-    "cima_electrical": {
-        "name": "CIMA+ - Electrical Engineering Internships",
-        "url": "https://jobs.smartrecruiters.com/CIMA2/744000105236946-summer-2026-electrical-engineering-internships-university-level-",
-        "type": "static",
-        "follow_links": True,
-        "selectors": {
-            "container": "section.job-ad-content, div.job-details, article",
-            "title": "h1, h2",
-            "link": "a",
-        },
-    },
-}
+PRESET_SOURCES = {}
 
 FIELD_RESUME_FILES = {
     "cs": BASE_DIR / "resume" / "resume_cs.txt",
@@ -167,9 +90,7 @@ def match_jobs():
     data = request.get_json(silent=True) or {}
     source_type = data.get("source", "mock")
 
-    if source_type in PRESET_SOURCES:
-        source = PRESET_SOURCES[source_type]
-    elif source_type == "custom":
+    if source_type == "custom":
         url = data.get("url", "").strip()
         if not url:
             return jsonify({"error": "URL is required for custom sources."}), 400
